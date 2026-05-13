@@ -33,15 +33,13 @@ Olist has no session or clickstream data. You will generate a synthetic event la
 
 ## 1. Environment & Repository Setup
 
-- [ ] Create GitHub repository: `product-analytics-pipeline`
-- [ ] Set up `.gitignore` (ignore `/data/raw`, `.env`, `__pycache__`, `.Rproj.user`)
-- [ ] Create `README.md` with architecture diagram placeholder
-- [ ] Set up Python virtual environment (`python -m venv venv`) or `conda`
-- [ ] Install core packages: `pandas`, `numpy`, `duckdb`, `dbt-core`, `dbt-duckdb`, `prefect`, `faker`, `scipy`, `scikit-learn`, `lifetimes`, `xgboost`, `causalml` or `econml`, `prophet`, `great_expectations`
-- [ ] Set up R environment (optional — for Shiny dashboard and `grf` uplift): `renv::init()`
-- [ ] Install R packages: `shiny`, `dplyr`, `dbplyr`, `duckdb`, `ggplot2`, `plotly`, `grf`, `survival`
+- [x] Create GitHub repository: `product-analytics-pipeline`
+- [x] Set up `.gitignore` (ignore `/data/raw`, `.env`, `__pycache__`, `.Rproj.user`)
+- [x] Create `README.md` with architecture diagram placeholder
+- [x] Set up Python virtual environment (`python -m venv venv`) or `conda`
+- [x] Install core packages: `pandas`, `numpy`, `duckdb`, `dbt-core`, `dbt-duckdb`, `prefect`, `faker`, `scipy`, `scikit-learn`, `lifetimes`, `xgboost`, `causalml` or `econml`, `prophet`, `great_expectations`
 - [ ] Create `docker-compose.yml` with service definitions (see Infrastructure section)
-- [ ] Create `.env` file for any config variables (paths, seeds, experiment parameters)
+- [x] Create `.env` file for any config variables (paths, seeds, experiment parameters)
 
 ### Repository Structure
 ```
@@ -81,15 +79,15 @@ product-analytics-pipeline/
 
 ## 2. Infrastructure Setup
 
-- [ ] **DuckDB** — primary storage engine. No server needed; it's a file. Create `data/warehouse.duckdb`
-- [ ] **dbt-duckdb** — transformation layer connected to the same `.duckdb` file
-- [ ] **Prefect** — orchestration. Run `prefect server start` locally. No cloud account needed.
+- [x] **DuckDB** — primary storage engine. No server needed; it's a file. Create `data/warehouse.duckdb`
+- [x] **dbt-duckdb** — transformation layer connected to the same `.duckdb` file
+- [x] **Prefect** — orchestration. Run `prefect server start` locally. No cloud account needed.
 - [ ] **Docker Compose** — define services:
   - `prefect-server`: Prefect UI and API
   - `prefect-worker`: executes flows
   - (optional) `minio`: local S3-compatible storage for raw file staging
-- [ ] Verify Prefect UI accessible at `localhost:4200`
-- [ ] Verify DuckDB readable from both Python (`duckdb` package) and R (`duckdb` package)
+- [x] Verify Prefect UI accessible at `localhost:4200`
+- [x] Verify DuckDB readable from both Python (`duckdb` package) and R (`duckdb` package)
 
 ---
 
@@ -97,20 +95,20 @@ product-analytics-pipeline/
 
 **Goal:** Land raw data exactly as-received into DuckDB. No transformations. Add ingestion metadata.
 
-- [ ] Write `ingestion/ingest_olist.py`:
+- [x] Write `ingestion/ingest_olist.py`:
   - Reads all Olist CSVs from `data/raw/`
   - Loads each into a DuckDB table prefixed `bronze_` (e.g., `bronze_orders`)
   - Adds `_ingested_at` timestamp column to every table
   - Idempotent: truncate and reload, or use insert-with-dedup logic
-- [ ] Write `ingestion/generate_events.py`:
+- [x] Write `ingestion/generate_events.py`:
   - Generates synthetic session, event, and A/B assignment tables
   - Saves to `data/synthetic/` as CSVs
   - Also loads into DuckDB as `bronze_events`, `bronze_ab_assignments`
   - Parameters (n_users, date_range, effect_sizes) read from `.env` or config YAML
-- [ ] Write `ingestion/ingest_events.py`:
+- [x] Write `ingestion/ingest_events.py`:
   - Loads synthetic CSVs into bronze layer
-- [ ] Verify row counts match source files
-- [ ] Write a basic data quality check: no fully null columns, expected date ranges present
+- [x] Verify row counts match source files
+- [x] Write a basic data quality check: no fully null columns, expected date ranges present
 
 **Bronze tables in DuckDB:**
 - `bronze_orders`
@@ -128,13 +126,13 @@ product-analytics-pipeline/
 
 **Goal:** Clean, typed, renamed, deduplicated tables. One model per source table. No joins yet.
 
-- [ ] Initialize dbt project: `dbt init dbt` inside repo, configure `profiles.yml` for DuckDB
-- [ ] Verify connection: `dbt debug`
+- [x] Initialize dbt project: `dbt init dbt` inside repo, configure `profiles.yml` for DuckDB
+- [x] Verify connection: `dbt debug`
 
 **dbt staging models (`dbt/models/staging/`):**
 
-- [ ] `stg_orders.sql` — parse timestamps, cast order status to consistent values, drop nulls on key fields
-- [ ] `stg_order_items.sql` — cast price and freight to float, join product_id
+- [x] `stg_orders.sql` — parse timestamps, cast order status to consistent values, drop nulls on key fields
+- [x ] `stg_order_items.sql` — cast price and freight to float, join product_id
 - [ ] `stg_order_payments.sql` — cast payment_value, handle multiple payments per order (aggregate to order level)
 - [ ] `stg_order_reviews.sql` — cast scores, parse review timestamps
 - [ ] `stg_customers.sql` — deduplicate on `customer_unique_id` (Olist has this — important!)
